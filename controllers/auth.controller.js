@@ -1,0 +1,41 @@
+import User from "../models/user.model.js";
+import bcryptjs from "bcryptjs";
+
+const signUp = async (req, res) => {
+  const { name, email, password } = req.body;
+
+  try {
+    if (!name || !email || !password) {
+      return res.status(400).json({
+        message: "Send all the details",
+      });
+    }
+    const hashedPass = await bcryptjs.hash(password, 10);
+    const existingEmail = await User.findOne({ email });
+
+    if (existingEmail) {
+      return res.status(400).json({
+        message: "Duplicate Email can not exist",
+      });
+    }
+
+    const newUser = await User.create({
+      name,
+      email,
+      password: hashedPass,
+    });
+    res.status(201).json({
+      message: "New User Created.",
+      newUser: {
+        name,
+        email,
+      },
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Internal Server error",
+      error: error,
+    });
+  }
+};
+export default signUp;
