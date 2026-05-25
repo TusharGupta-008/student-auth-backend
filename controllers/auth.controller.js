@@ -11,14 +11,13 @@ const signUp = async (req, res) => {
         message: "Send all the details",
       });
     }
-    const hashedPass = await bcryptjs.hash(password, 10);
     const existingEmail = await User.findOne({ email });
-
     if (existingEmail) {
       return res.status(400).json({
         message: "Duplicate Email can not exist",
       });
     }
+    const hashedPass = await bcryptjs.hash(password, 10);
 
     const newUser = await User.create({
       name,
@@ -35,6 +34,7 @@ const signUp = async (req, res) => {
 
     res.status(201).json({
       message: "New User Created.",
+      token,
       newUser: {
         name,
         email,
