@@ -26,7 +26,7 @@ const signUp = async (req, res) => {
     });
     const token = jwt.sign(
       {
-        id: newUser.id,
+        id: newUser._id,
       },
       process.env.JWT_SECRET,
       { expiresIn: "5d" },
@@ -47,4 +47,41 @@ const signUp = async (req, res) => {
     });
   }
 };
-export default signUp;
+
+const login = async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    if (!email || !password) {
+      res.status(400).json({
+        message: "Send all the details",
+      });
+    }
+    const existingEmail = await User.findOne({ email });
+    if (!existingEmail) {
+      return res.status(400).json({
+        message: "Invalid Email",
+      });
+    }
+    const compare = await bcryptjs.compare(password, existingEmail.password);
+    if (!compare) {
+      return res.status(400).json({
+        message: "Invalid password",
+      });
+    }
+    const token = jwt.sign({ id: existingEmail._id }, process.env.JWT_SECRET, {
+      expiresIn: "5d",
+    });
+    return res.status(200).json({
+      message: "Welcome Back",
+      token,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Server Error",
+      error: error.message,
+    });
+  }
+};
+
+export { signUp, login };
