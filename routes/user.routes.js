@@ -8,5 +8,6 @@ const appRouter = Router();
 
 appRouter.post("/signUp", signUp);
 appRouter.post("/login", login);
+appRouter.authMiddleware
 
 export default appRouter;
