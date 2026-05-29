@@ -12,3 +12,14 @@
 
 // export default appRouter;
 
+import { Router } from "express";
+import { signup, login, profile } from "../controllers/auth.controller.js";
+import authMiddleware from "../middlewares/auth.middleware.js";
+
+const appRouter = Router();
+
+appRouter.post("/signup", signup);
+appRouter.post("/login", login);
+appRouter.get("/profile", authMiddleware, profile);
+
+export default appRouter;
