@@ -20,3 +20,20 @@
 //   console.log(`Server is running ${port}`);
 // });
 
+import express from "express";
+import dotenv from "dotenv";
+import appRouter from "./routes/user.routes.js";
+import connectDb from "./db/db.js";
+dotenv.config();
+
+const app = express();
+
+app.use(express.json());
+
+app.use("/api", appRouter);
+
+const port = process.env.PORT || 5000;
+connectDb()
+app.listen(port, () => {
+  console.log(`Server is running at ${port}`);
+});
